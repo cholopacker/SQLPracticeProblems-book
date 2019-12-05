@@ -87,7 +87,7 @@ SELECT ProductID, ProductName, Suppliers.CompanyName AS Supplier
 --Previous exploratory queries
 SELECT DISTINCT(ShipVia) FROM Orders;
 SELECT ShipperID FROM Shippers;
-SELECT COLUMN_NAME, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS
+SELECT DISTINCT(COLUMN_NAME), TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS
  WHERE TABLE_NAME = 'Orders' OR TABLE_NAME = 'Shippers'
  ORDER BY COLUMN_NAME;
 --Answer
@@ -102,41 +102,137 @@ SELECT OrderID, CONVERT(date, OrderDate) AS OrderDate, Shippers.CompanyName AS S
 -- INTERMEDIATE PROBLEMS
 
 --20 Categories, and the total products in each category
-
+SELECT 
+	Categories.CategoryName,
+	COUNT(Products.ProductID) AS TotalProducts
+	FROM Products
+	JOIN Categories 
+		ON Products.CategoryID = Categories.CategoryID
+	GROUP BY Categories.CategoryName
+	ORDER BY TotalProducts DESC;
 
 --21 Total customers per country/city
+SELECT Country, City, COUNT(CustomerID) AS TotalCustomers
+	FROM Customers
+	GROUP BY Country, City
+	ORDER BY TotalCustomers DESC;
+
+--22 Products that need reordering
+SELECT ProductID, ProductName, UnitsInStock, ReorderLevel
+	FROM Products
+	WHERE UnitsInStock <= ReorderLevel
+	ORDER BY ProductID;
+
+--23 Products that need reordering, continued
+SELECT ProductID,
+	ProductName,
+	UnitsInStock,
+	UnitsOnOrder,
+	ReorderLevel,
+	Discontinued
+	FROM Products
+	WHERE UnitsInStock + UnitsOnOrder <= ReorderLevel
+		AND Discontinued = 0;
+
+--24 Customer list by region
+SELECT
+	CustomerID,
+	CompanyName,
+	ContactName,
+	Country,
+	Region,
+	CASE WHEN Region IS NULL THEN 1
+		ELSE 0
+		END AS RegionOrder
+	FROM Customers
+	ORDER BY RegionOrder, CustomerID;
 
 
---22
+--25 High freight charges
+SELECT TOP 3
+	ShipCountry,
+	AVG(Freight) AS AvgFreight
+	FROM Orders
+	GROUP BY ShipCountry
+	ORDER BY AvgFreight DESC;
+	--LIMIT 3; *Would have been the solution in MySQL, instead of `TOP 3`.
 
+--26 High freight charges—2015
+SELECT TOP 3
+	ShipCountry,
+	AVG(Freight) AS AvgFreight
+	FROM Orders
+	WHERE CONVERT(date,OrderDate) LIKE '2015-%'
+	/*	Alternative solution:
+	WHERE OrderDate >= '1/1/2015'
+		AND OrderDate <= '1/1/2016'
+	*/
+	GROUP BY ShipCountry
+	ORDER BY AvgFreight DESC;
 
---23
+--27 High freight charges with between
+SELECT
+	OrderID,
+	OrderDate,
+	ShipCountry,
+	Freight
+	FROM Orders
+	WHERE CONVERT(date,OrderDate) LIKE '2015-%'
+	ORDER BY Freight DESC;
+/*The misleading order could be OrderID 10806, 
+which OrderDate is 2015-12-31 11:00:00.000*/
 
+--28 High freight charges—last year
+SELECT TOP 3
+	ShipCountry,
+	AVG(Freight) AS AvgFreight
+	FROM Orders
+	WHERE OrderDate >= 
+		(SELECT
+		DATEADD(yy, -1, MAX(CONVERT(date, OrderDate)))
+		FROM Orders)
+	GROUP BY ShipCountry
+	ORDER BY AvgFreight DESC;
+/*Result is slightly different from that on the book (USA 119.3032)
+but I see no reason for that and running the proposed solution gave 
+back the same table, so I'm considering this one fine as well.*/
 
---24
-
-
---25
-
-
---26
-
-
---27
-
-
---28
-
-
---29
-
+--29 Employee/Order Detail report
+SELECT
+	e.EmployeeID,
+	e.LastName,
+	o.OrderID,
+	p.ProductName,
+	d.Quantity
+	FROM Orders AS o
+	LEFT JOIN Employees AS e
+		ON o.EmployeeID = e.EmployeeID
+	LEFT JOIN OrderDetails as d
+		ON o.OrderID = d.OrderID
+	LEFT JOIN Products as p
+		ON d.ProductID = p.ProductID
+	ORDER BY o.OrderID, p.ProductID;
 
 --30 Customers with no orders
-
-
+SELECT
+	c.CustomerID,
+	o.CustomerID
+	FROM Customers c
+	LEFT JOIN Orders o
+		ON c.CustomerID = o.CustomerID
+	WHERE O.CustomerID IS NULL;
 --31 Customers with no orders for EmployeeID 4
-
-
+/*SELECT
+	Customers.CustomerID
+	FROM Customers
+	LEFT JOIN (SELECT 
+						CustomerID
+						FROM Orders
+						WHERE EmployeeID != 4
+						GROUP BY CustomerID) AS SubQuery 
+		ON Customers.CustomerID = SubQuery.CustomerId
+*/
+	
 -- END OF INTERMEDIATE PROBLEMS
 
 -- ADVANCED PROBLEMS
