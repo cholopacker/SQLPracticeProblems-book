@@ -157,7 +157,7 @@ SELECT TOP 3
 	ORDER BY AvgFreight DESC;
 	--LIMIT 3; *Would have been the solution in MySQL, instead of `TOP 3`.
 
---26 High freight charges�2015
+--26 High freight charges—2015
 SELECT TOP 3
 	ShipCountry,
 	AVG(Freight) AS AvgFreight
@@ -182,7 +182,7 @@ SELECT
 /*The misleading order could be OrderID 10806, 
 which OrderDate is 2015-12-31 11:00:00.000*/
 
---28 High freight charges�last year
+--28 High freight charges—last year
 SELECT TOP 3
 	ShipCountry,
 	AVG(Freight) AS AvgFreight
@@ -240,10 +240,10 @@ SELECT
 --32 High-value customers
 
 
---33 High-value customers�total orders
+--33 High-value customers—total orders
 
 
---34 High-value customers�with discount
+--34 High-value customers—with discount
 
 
 --35 Month-end orders
@@ -252,58 +252,58 @@ SELECT
 --36 Orders with many line items
 
 
---37 Orders�random assortment
+--37 Orders—random assortment
 
 
---38 Orders�accidental double-entry 
+--38 Orders—accidental double-entry 
 
 
---39 Orders�accidental double-entry details
+--39 Orders—accidental double-entry details
 
 
---40
+--40 Orders—accidental double-entry details, derived table
 
 
---41
+--41 Late orders
 
 
---42
+--42 Late orders—which employees?
 
 
---43
+--43 Late orders vs. total orders
 
 
---44
+--44 Late orders vs. total orders—missing employee
 
 
---45
+--45 Late orders vs. total orders—fix null
 
 
---46
+--46 Late orders vs. total orders—percentage
 
 
---47
+--47 Late orders vs. total orders—fix decimal
 
 
---48
+--48 Customer grouping
 
 
---49
+--49 Customer grouping—fix null
 
 
---50
+--50 Customer grouping with percentage
 
 
---51
+--51 Customer grouping—flexible
 
 
---52
+--52 Countries with suppliers or customers
 
 
---53
+--53 Countries with suppliers or customers v.2
 
 
---54
+--54 Countries with suppliers or customers v.3
 
 
 --55 First order in each country
@@ -312,7 +312,7 @@ SELECT
 --56 Customers with multiple orders in 5 day period
 
 
---57 Customers with multiple orders in 5 day period, version 2
+--57 Customers with multiple orders in 5 day period, v.2
 
 
 -- END OF ADVANCED PROBLEMS
