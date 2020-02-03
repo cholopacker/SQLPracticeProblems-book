@@ -35,6 +35,7 @@ SELECT PRoductID, ProductName
 SELECT OrderID, CustomerID, ShipCountry
 	FROM Orders
 	WHERE ShipCountry = 'France' OR ShipCountry = 'Belgium';
+	-- Alternatively: WHERE ShipCountry IN ('France', 'Belgium')
 
 --9 Orders shipping to any country in Latin America
 SELECT OrderID, CustomerID, ShipCountry
@@ -66,10 +67,17 @@ SELECT COUNT(DISTINCT CustomerID) AS TotalCustomers
 --15 When was the first order?
 SELECT MIN(OrderDate) AS FirstOrder
 	FROM Orders;
+	-- Alternatively:
+	SELECT TOP 1 OrderDate --Similar to LIMIT operator in MySQL
+		FROM Orders
 
 --16 Countries where there are customers
 SELECT DISTINCT(Country)
 	FROM Customers;
+	-- Alternatively:
+	SELECT Country
+		FROM Customers
+		GROUP BY Country;
 
 --17 Contact titles for customers
 SELECT ContactTitle, COUNT(ContactTitle) AS TotalContacTitle
@@ -84,13 +92,15 @@ SELECT ProductID, ProductName, Suppliers.CompanyName AS Supplier
 	ORDER BY ProductID;
 
 --19 Orders and the Shipper that was used
+
 --Previous exploratory queries
 SELECT DISTINCT(ShipVia) FROM Orders;
 SELECT ShipperID FROM Shippers;
 SELECT DISTINCT(COLUMN_NAME), TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS
  WHERE TABLE_NAME = 'Orders' OR TABLE_NAME = 'Shippers'
  ORDER BY COLUMN_NAME;
---Answer
+
+--Actual Answer
 SELECT OrderID, CONVERT(date, OrderDate) AS OrderDate, Shippers.CompanyName AS Shipper
 	FROM Orders
 	JOIN Shippers ON Orders.ShipVia = Shippers.ShipperID
@@ -221,6 +231,7 @@ SELECT
 	LEFT JOIN Orders o
 		ON c.CustomerID = o.CustomerID
 	WHERE O.CustomerID IS NULL;
+
 --31 Customers with no orders for EmployeeID 4
 /*SELECT
 	Customers.CustomerID
